@@ -44,8 +44,14 @@ solveDay1() {
   print('left: $left, right: $right');
   if (left.length == right.length) {
     for (int i = 0; i < left.length; i++) {
+      int match = 0;
       print('i: $i');
-      answer.add((left[i] - right[i]).abs());
+      for (int j = 0; j < right.length; j++) {
+        if (left[i] == right[j]) {
+          match = match + 1;
+        }
+      }
+      answer.add(left[i] * match);
     }
   }
 
