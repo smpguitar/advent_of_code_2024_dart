@@ -2,17 +2,58 @@ import 'dart:io';
 
 int compareIntegers(int a, int b) {
   int result = a - b;
-  print('a: $a, b: $b, result: $result');
   return result;
 }
 
 bool isPositive(int value) {
   if (value > 0) {
-    print('is positive: True');
     return true;
   }
-  print('is positive: False');
   return false;
+}
+
+bool doesItPass(int a, int b, bool isTrendingPositive) {
+  int value = compareIntegers(a, b);
+
+  if (value.abs() > 3 || value == 0) {
+    return false;
+  }
+  if (isPositive(value) != isTrendingPositive) {
+    return false;
+  }
+
+  return true;
+}
+
+List<List<int>> processList(List<List<int>> listInput) {
+  List<List<int>> failed = [];
+  for (int i = 0; i < listInput.length; i++) {
+    if (processIndividualList(listInput[i]) == true) {
+      print('its safe!');
+    } else {
+      failed.add(listInput[i]);
+    }
+  }
+  return failed;
+}
+
+bool processIndividualList(List<int> list) {
+  bool isTrendingPositive = true;
+  bool isSafe = false;
+  for (int j = 0; j < list.length - 1; j++) {
+    int value = list[j] - list[j + 1];
+    if (j == 0) {
+      isTrendingPositive = isPositive(value);
+      isSafe = true;
+    }
+
+    if (doesItPass(list[j], list[j + 1], isTrendingPositive) == false) {
+      isSafe = false;
+      break;
+    }
+  }
+
+  return isSafe;
 }
 
 solveDay1() {
@@ -30,37 +71,23 @@ solveDay1() {
 
   int answer = 0;
 
-  print(puzzleInput);
+  List<List<int>> fails = processList(puzzleInput);
+  answer = puzzleInput.length - fails.length;
+  print('answer: $answer');
+  print('fails: $fails');
 
-  for (int i = 0; i < puzzleInput.length; i++) {
-    bool isSafe = true;
-    bool isTrendingPositive = true;
-    print('i: ${puzzleInput[i]}');
-    for (int j = 0; j < puzzleInput[i].length - 1; j++) {
-      int value = compareIntegers(puzzleInput[i][j], (puzzleInput[i][j + 1]));
-      if (value.abs() == 0) {
-        isSafe = false;
+  for (int i = 0; i < fails.length; i++) {
+    List<int> list = fails[i];
+    print('list: $list');
+    for (int j = 0; j < list.length; j++) {
+      int temp = list[j];
+      list.removeAt(j);
+      print('list: $list');
+      if (processIndividualList(list) == true) {
+        answer = answer + 1;
         break;
       }
-      if (j == 0) {
-        isSafe = true;
-        isTrendingPositive = isPositive(value);
-      }
-      if (isSafe == true &&
-          value.abs() > 0 &&
-          value.abs() <= 3 &&
-          isPositive(value) == isTrendingPositive) {
-        continue;
-      } else {
-        isSafe = false;
-        print(
-            'setting isSafe to false. value: $value, isPositive: ${isTrendingPositive}, isPositive: ${isPositive(value)}');
-        break;
-      }
-    }
-    if (isSafe == true) {
-      answer = answer + 1;
-      print('adding 1 to answer');
+      list.insert(j, temp);
     }
   }
   print('answer: $answer');

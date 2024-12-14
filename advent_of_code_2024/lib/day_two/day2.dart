@@ -32,7 +32,11 @@ solveDay1() {
 
   print(puzzleInput);
 
+  List<int> passed = [];
+  int evaluated = 0;
+
   for (int i = 0; i < puzzleInput.length; i++) {
+    evaluated = evaluated + 1;
     bool isSafe = true;
     bool isTrendingPositive = true;
     print('i: ${puzzleInput[i]}');
@@ -59,9 +63,11 @@ solveDay1() {
       }
     }
     if (isSafe == true) {
+      passed.add(evaluated);
       answer = answer + 1;
-      print('adding 1 to answer');
+      print('adding 1 to answer, evaluated: $evaluated');
     }
   }
+  print('passed: $passed');
   print('answer: $answer');
 }
